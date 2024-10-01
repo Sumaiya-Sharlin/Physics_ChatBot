@@ -1,0 +1,36 @@
+import os
+import openai
+import sys
+
+sys.path.append('../..')
+
+from dotenv import load_dotenv, find_dotenv
+
+_ = load_dotenv(find_dotenv())  # read local .env file
+
+openai.api_key = os.environ['OPENAI_API_KEY']
+
+
+from langchain_community.document_loaders import PyPDFLoader
+
+loader = PyPDFLoader(
+    r"C:\Users\User\Downloads\Physics Classes 9-10 (English Version) - National Curriculum and Textbook Board of Bangladesh - PDF Room.pdf")
+pages = loader.load()
+
+from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
+
+chunk_size = 1000
+chunk_overlap = 150
+
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=chunk_size,
+    chunk_overlap=chunk_overlap,
+    length_function=len
+)
+
+docs = text_splitter.split_documents(pages)
+num_chunks = len(docs)
+num_pages = len(pages)
+
+print(num_pages)
+print(num_chunks)
